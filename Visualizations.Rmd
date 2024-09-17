@@ -1,0 +1,138 @@
+---
+title: "Visualizations for project"
+author: "Mutasim Mahmud, 0813161"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+Necessary setup to not show any wanrning signs,
+```{r setup, include=FALSE}
+# Using this code to Remove warnings while running R chunks
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE,eval=TRUE)
+```
+
+First we will load the dataset,
+```{r}
+library(dplyr)
+data <- read.csv("C:\\Local Disk (A)\\Trent University\\Data Visualization\\Project\\Final Project\\HR_Analytics.csv")
+head(data,5)
+```
+
+See the attributes and their structure,
+```{r}
+str(data)
+```
+
+Cheking other characteristics of the data,
+```{r}
+summary(data)
+```
+
+Now we will do visualizations!
+
+1.Trellis Plot
+```{r}
+library(ggplot2)
+
+# Loading the dataset
+data <- read.csv("C:\\Local Disk (A)\\Trent University\\Data Visualization\\Project\\Final Project\\HR_Analytics.csv")
+
+# Converting necessary attributes to factors
+data$AgeGroup <- as.factor(data$AgeGroup)
+data$Attrition <- as.factor(data$Attrition)
+
+# Trellis Plot
+ggplot(data, aes(x=AgeGroup, y=JobSatisfaction, fill=Attrition)) + geom_boxplot() + facet_wrap(~ Attrition) + labs(title="Job Satisfaction by Age Group and Attrition", x="AgeGroup", y="JobSatisfaction") + theme(axis.text.x = element_text(angle=0, hjust=2))
+
+```
+In No group, Most employees have a Job Satisfaction level between 3 and 4, regardless of their age group. In yes group, Younger age groups (18-25 and 26-35) have a wider range of Job Satisfaction levels, indicating more variability in their satisfaction. Higher Job Satisfaction levels are generally associated with employees who did not leave the company. There may be a potential relationship between lower Job Satisfaction and higher attrition rates, particularly among younger employees.
+
+2.
+```{r}
+library(ggplot2)
+
+# Loading the dataset
+data <- read.csv("C:\\Local Disk (A)\\Trent University\\Data Visualization\\Project\\Final Project\\HR_Analytics.csv")
+
+# Converting necessary attributes to factors
+data$Attrition <- as.factor(data$Attrition)
+data$YearsSinceLastPromotion <- as.factor(data$YearsSinceLastPromotion)
+
+# stacked bar plot
+ggplot(data, aes(x=(YearsSinceLastPromotion), fill=Attrition)) +
+  geom_bar(position="stack") +
+  labs(title="Years Since Last Promotion by Attrition", x="Years Since Last Promotion", y="Count") +
+  theme_minimal()
+
+```
+A significant number of employees who left the company (Attrition = Yes) have 0 years since their last promotion. This indicates that many employees left shortly after being promoted.
+Employees who have not been promoted for a long time (e.g., more than 4 years) generally show fewer cases of attrition. This suggests that long-term employees might be more stable and less likely to leave, even without recent promotions.
+There are small peaks in attrition at 1 and 2 years since the last promotion. This could indicate critical periods where employees reassess their career progression and decide to leave if they do not see further advancement.
+
+3.
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(reshape2)
+library(dplyr)
+
+# Load the dataset
+data <- read.csv("C:\\Local Disk (A)\\Trent University\\Data Visualization\\Project\\Final Project\\HR_Analytics.csv")
+
+# Select necessary columns for correlation
+data_selected <- data %>%
+  select(Education, EnvironmentSatisfaction, PerformanceRating, RelationshipSatisfaction, WorkLifeBalance, Attrition)
+
+# Convert Attrition to numeric for correlation
+data_selected$Attrition <- as.numeric(data_selected$Attrition == "Yes")
+
+# Compute the correlation matrix
+cor_matrix <- cor(data_selected, use="complete.obs")
+
+# Melt the correlation matrix into long format
+melted_cor_matrix <- melt(cor_matrix)
+
+# Plot the heatmap
+ggplot(data = melted_cor_matrix, aes(x=Var1, y=Var2, fill=value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1, 1), space = "Lab", 
+                       name="Correlation") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 12, hjust = 1)) +
+  coord_fixed() +
+  labs(title="Correlation Heatmap of Satisfaction Metrics and Attrition", 
+       x="", y="")
+
+
+
+```
+
+```{r}
+library(corrplot)
+
+# Load the dataset
+data <- read.csv("C:\\Local Disk (A)\\Trent University\\Data Visualization\\Project\\Final Project\\HR_Analytics.csv")
+
+data$Attrition <- as.numeric(factor(data$Attrition))
+data$BusinessTravel <- as.numeric(factor(data$BusinessTravel))
+data$Department <- as.numeric(data$Department)
+data$EducationField <- as.numeric(data$EducationField)
+data$Gender <- as.numeric(factor(data$Gender))
+data$JobRole <- as.numeric(data$JobRole)
+data$MaritalStatus <- as.numeric(data$MaritalStatus)
+data$SalarySlab <- as.numeric(data$SalarySlab)
+data$Over18 <- as.numeric(factor(data$Over18))
+data$OverTime <- as.numeric(factor(data$OverTime))
+
+
+correlation_matrix <- cor(core.data[c("Age","AgeGroup","Attrition
+","BusinessTravel","DailyRate","Department","DistanceFromHome","Education","EducationField","EmployeeCount","EmployeeNumber","EnvironmentSatisfaction","Gender","HourlyRate","JobInvolvement","JobLevel","JobRole","JobSatisfaction","MaritalStatus","MonthlyIncome","SalarySlab","MonthlyRate","NumCompaniesWorked","Over18","OverTime","PercentSalaryHike
+","PerformanceRating","RelationshipSatisfaction","StandardHours","StockOptionLevel","TotalWorkingYears","TrainingTimesLastYear","WorkLifeBalance","YearsAtCompany","YearsInCurrentRole","YearsSinceLastPromotion","YearsWithCurrManager")])
+ 
+corrplot(correlation_matrix, method = "color", type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 45, tl.cex = 0.6)
+
+
+```
+
